@@ -3,6 +3,7 @@
 namespace Jkirkby91\IlluminateRequestPSR7Adapter\Middleware;
 
 use Closure;
+use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Zend\Diactoros\Stream;
 use Illuminate\Http\Request;
 use Zend\Diactoros\ServerRequest;
@@ -35,7 +36,7 @@ class PSR7AdapterMiddleware
             $body = new Stream($request->getContent());
             $parsedBody = null;
         } else {
-            $parsedBody = $request->getContent();
+            $parsedBody = $request->all();
             $body = 'php://input';
         }
 
@@ -50,7 +51,6 @@ class PSR7AdapterMiddleware
 
         //get the psr7 request
         $PSR7Request = new ServerRequest($parameterBag,$uploadFiles,$uri,$method,$body,$headers,$cookies,$queryParams,$parsedBody);
-
         return $next($PSR7Request);
     }
 }
