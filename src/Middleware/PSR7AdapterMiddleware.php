@@ -3,7 +3,6 @@
 namespace Jkirkby91\IlluminateRequestPSR7Adapter\Middleware;
 
 use Closure;
-use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
 use Zend\Diactoros\Stream;
 use Illuminate\Http\Request;
 use Zend\Diactoros\ServerRequest;

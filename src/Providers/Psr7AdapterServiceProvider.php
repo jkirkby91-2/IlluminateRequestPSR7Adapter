@@ -2,9 +2,10 @@
 
 namespace Jkirkby91\IlluminateRequestPSR7Adapter\Providers;
 
-use Zend\Diactoros;
-use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\ServerRequest;
 use Illuminate\Support\ServiceProvider;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -13,28 +14,28 @@ use Psr\Http\Message\ServerRequestInterface;
  * @package Jkirkby91\LumenRestServerComponent\Providers
  * @author James Kirkby <jkirkby91@gmail.com>
  */
-class IlluminateRequestPSR7AdapterServiceProvider extends ServiceProvider
+class Psr7AdapterServiceProvider extends ServiceProvider
 {
 
     /**
      * Register the application services.
+     * @TODO get our psr7 implementation from config
      *
      * @return void
      */
     public function register()
     {
         $this->app->bind(
-            'Psr\Http\Message\ServerRequestInterface',
-            'Zend\Diactoros\ServerRequest'
+            'ServerRequestInterface',
+            'ServerRequest'
         );
 
         $this->app->bind(
-            'Psr\Http\Message\ResponseInterface',
-            'Zend\Diactoros\Response'
+            'ResponseInterface',
+            'Response'
         );
 
         $this->registerMiddleware();
-
     }
 
 
