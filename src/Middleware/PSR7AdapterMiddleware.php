@@ -50,6 +50,7 @@ class PSR7AdapterMiddleware
 
         //get the psr7 request
         $PSR7Request = new ServerRequest($parameterBag,$uploadFiles,$uri,$method,$body,$headers,$cookies,$queryParams,$parsedBody);
+        
         return $next($PSR7Request);
     }
 }

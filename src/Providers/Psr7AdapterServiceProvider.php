@@ -9,9 +9,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
- * Class LumenCorsServiceProvider
+ * Class Psr7AdapterServiceProvider
  *
- * @package Jkirkby91\LumenRestServerComponent\Providers
+ * @package Jkirkby91\Psr7AdapterServiceProvider\Providers
  * @author James Kirkby <jkirkby91@gmail.com>
  */
 class Psr7AdapterServiceProvider extends ServiceProvider
@@ -35,9 +35,10 @@ class Psr7AdapterServiceProvider extends ServiceProvider
             'Response'
         );
 
+        $this->app['psr7request'] = new ServerRequest;
+
         $this->registerMiddleware();
     }
-
 
     /**
      * Register any component middlewares
@@ -45,6 +46,7 @@ class Psr7AdapterServiceProvider extends ServiceProvider
     public function registerMiddleware()
     {
         $this->app->middleware(\Jkirkby91\IlluminateRequestPSR7Adapter\Middleware\PSR7AdapterMiddleware::class);
+        $this->app->routeMiddleware(['psr7adapter' => \Jkirkby91\IlluminateRequestPSR7Adapter\Middleware\PSR7AdapterMiddleware::class]);
     }
 
 }
