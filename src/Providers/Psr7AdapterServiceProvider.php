@@ -1,52 +1,65 @@
 <?php
+	declare(strict_types=1);
 
-namespace Jkirkby91\IlluminateRequestPSR7Adapter\Providers;
+	namespace Jkirkby91\IlluminateRequestPSR7Adapter\Providers {
 
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Illuminate\Support\ServiceProvider;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+		use Jkirkby91\{
+			IlluminateRequestPSR7Adapter\Middleware\PSR7AdapterMiddleware
+		};
 
-/**
- * Class Psr7AdapterServiceProvider
- *
- * @package Jkirkby91\Psr7AdapterServiceProvider\Providers
- * @author James Kirkby <jkirkby91@gmail.com>
- */
-class Psr7AdapterServiceProvider extends ServiceProvider
-{
+		use Zend\{
+			Diactoros\Response,
+			Diactoros\ServerRequest
+		};
 
-    /**
-     * Register the application services.
-     * @TODO get our psr7 implementation from config
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->app->bind(
-            'ServerRequestInterface',
-            'ServerRequest'
-        );
+		use Illuminate\{
+			Support\ServiceProvider
+		};
 
-        $this->app->bind(
-            'ResponseInterface',
-            'Response'
-        );
+		use Psr\{
+			Http\Message\ResponseInterface,
+			Http\Message\ServerRequestInterface
+		};
 
-        $this->app['psr7request'] = new ServerRequest;
+		/**
+		 * Class Psr7AdapterServiceProvider
+		 *
+		 * @package Jkirkby91\IlluminateRequestPSR7Adapter\Providers
+		 * @author  James Kirkby <jkirkby@protonmail.ch>
+		 */
+		class Psr7AdapterServiceProvider extends ServiceProvider
+		{
 
-        $this->registerMiddleware();
-    }
+			/**
+			 * Register the application services.
+			 * @TODO get our psr7 implementation from config
+			 *
+			 * @return void
+			 */
+			public function register()
+			{
+				$this->app->bind(
+					'ServerRequestInterface',
+					'ServerRequest'
+				);
 
-    /**
-     * Register any component middlewares
-     */
-    public function registerMiddleware()
-    {
-        $this->app->middleware(\Jkirkby91\IlluminateRequestPSR7Adapter\Middleware\PSR7AdapterMiddleware::class);
-        $this->app->routeMiddleware(['psr7adapter' => \Jkirkby91\IlluminateRequestPSR7Adapter\Middleware\PSR7AdapterMiddleware::class]);
-    }
+				$this->app->bind(
+					'ResponseInterface',
+					'Response'
+				);
 
-}
+				$this->app['psr7request'] = new ServerRequest;
+
+				$this->registerMiddleware();
+			}
+
+			/**
+			 * Register any component middlewares
+			 */
+			public function registerMiddleware()
+			{
+				$this->app->middleware(PSR7AdapterMiddleware::class);
+				$this->app->routeMiddleware(['psr7adapter' => PSR7AdapterMiddleware::class]);
+			}
+		}
+	}

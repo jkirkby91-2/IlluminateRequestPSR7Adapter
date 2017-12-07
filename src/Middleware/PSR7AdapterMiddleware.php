@@ -1,56 +1,67 @@
 <?php
+	declare(strict_types=1);
 
-namespace Jkirkby91\IlluminateRequestPSR7Adapter\Middleware;
+	namespace Jkirkby91\IlluminateRequestPSR7Adapter\Middleware {
 
-use Closure;
-use Zend\Diactoros\Stream;
-use Illuminate\Http\Request;
-use Zend\Diactoros\ServerRequest;
+		use Closure;
 
-/**
- * Class PSR7AdapterMiddleware
- *
- * Converts Illuminate\Http\Request to Zend\Diactoros\ServerRequest which implements Psr\Http\Message\ServerRequestInterface
- *
- * @package Jkirkby91\IlluminateRequestPSR7Adapter
- * @author James Kirkby <jkirkby91@gmail.com>
- */
-class PSR7AdapterMiddleware
-{
-    /**
-     * Get that proprietary incoming request and make it standardised
-     *
-     * @param Request $request
-     * @param Closure $next
-     * @return mixed
-     */
-    public function handle(Request $request, Closure $next)
-    {
-        //get source
-        $currentContentIsResource = is_resource($request->getContent());
+		use Symfony\{
+			Component\HttpFoundation\Response
+		};
 
-        //handle resources differently
-        if ($currentContentIsResource == true) {
-            rewind($request->getContent());
-            $body = new Stream($request->getContent());
-            $parsedBody = null;
-        } else {
-            $parsedBody = $request->all();
-            $body = 'php://input';
-        }
+		use Zend\{
+			Diactoros\Stream,
+			Diactoros\ServerRequest
+		};
+		
+		use Illuminate\{
+			Http\Request
+		};
 
-        //get other meta information
-        $parameterBag   = $request->server();
-        $uploadFiles    = $request->files->all();
-        $uri            = $request->getUri();
-        $method         = $request->getMethod();
-        $headers        = $request->headers->all();
-        $cookies        = $request->cookies->all();
-        $queryParams    = $request->query->all();
+		/**
+		 * Class PSR7AdapterMiddleware
+		 *
+		 * @package Jkirkby91\IlluminateRequestPSR7Adapter\Middleware
+		 * @author  James Kirkby <jkirkby@protonmail.ch>
+		 */
+		class PSR7AdapterMiddleware
+		{
 
-        //get the psr7 request
-        $PSR7Request = new ServerRequest($parameterBag,$uploadFiles,$uri,$method,$body,$headers,$cookies,$queryParams,$parsedBody);
-        
-        return $next($PSR7Request);
-    }
-}
+			/**
+			 * handle()
+			 * @param \Illuminate\Http\Request $request
+			 * @param \Closure                 $next
+			 *
+			 * @return \Symfony\Component\HttpFoundation\Response
+			 */
+			public function handle(Request $request, Closure $next) : Response
+			{
+				//get source
+				$currentContentIsResource = is_resource($request->getContent());
+
+				//handle resources differently
+				if ($currentContentIsResource == true) {
+					rewind($request->getContent());
+					$body = new Stream($request->getContent());
+					$parsedBody = null;
+				} else {
+					$parsedBody = $request->all();
+					$body = 'php://input';
+				}
+
+				//get other meta information
+				$parameterBag   = $request->server();
+				$uploadFiles    = $request->files->all();
+				$uri            = $request->getUri();
+				$method         = $request->getMethod();
+				$headers        = $request->headers->all();
+				$cookies        = $request->cookies->all();
+				$queryParams    = $request->query->all();
+
+				//get the psr7 request
+				$PSR7Request = new ServerRequest($parameterBag,$uploadFiles,$uri,$method,$body,$headers,$cookies,$queryParams,$parsedBody);
+
+				return $next($PSR7Request);
+			}
+		}
+	}
